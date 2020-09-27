@@ -3,6 +3,7 @@ package com.example.wifiscanlog;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.ActivityNotFoundException;
@@ -36,7 +37,11 @@ public class MainActivity extends AppCompatActivity {
     private Button scanViewBtn;
     private Button listViewBtn;
 
-    ArrayList<String> scanItems;
+    private ArrayList<String> scanItems;
+    private pagerAdapter pa;
+
+    private ScanFragment scanFragment;
+    private ListFragment listFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +61,9 @@ public class MainActivity extends AppCompatActivity {
         vp = findViewById(R.id.vp);
         scanViewBtn = findViewById(R.id.scanViewBtn);
         listViewBtn = findViewById(R.id.listViewBtn);
+        pa = new pagerAdapter(getSupportFragmentManager());
 
-        vp.setAdapter(new pagerAdapter(getSupportFragmentManager()));
+        vp.setAdapter(pa);
         vp.setOffscreenPageLimit(1);
         vp.setCurrentItem(0);
 
@@ -78,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     scanViewBtn.setSelected(false);
                     listViewBtn.setSelected(true);
+                    listFragment.refresh();
                 }
             }
 
@@ -104,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 scanViewBtn.setSelected(false);
                 listViewBtn.setSelected(true);
+                listFragment.refresh();
             }
             vp.setCurrentItem(tag);
         }
@@ -120,9 +128,11 @@ public class MainActivity extends AppCompatActivity {
         public androidx.fragment.app.Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return new ScanFragment();
+                    scanFragment = new ScanFragment();
+                    return scanFragment;
                 case 1:
-                    return new ListFragment();
+                    listFragment = new ListFragment();
+                    return listFragment;
                 default:
                     return null;
             }

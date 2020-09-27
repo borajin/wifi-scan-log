@@ -27,6 +27,7 @@ public class ScanFragment extends Fragment
     private Button scanBtn;
     private Button listBtn;
     private EditText editListName;
+    private DBAdapter dbAdapter;
 
     public ScanFragment()
     {
@@ -72,16 +73,26 @@ public class ScanFragment extends Fragment
     }
 
     private void saveList(String name) {
-        StringBuilder scanItem = new StringBuilder(name);
+        StringBuilder apInfo = new StringBuilder("");
 
-        for (int i=0; i < wifiList.getAdapter().getCount(); i++) {
-            scanItem.append("/");
-            scanItem.append(wifiList.getAdapter().getItem(i).toString());
+        if(wifiList.getAdapter() == null || wifiList.getAdapter().getCount() <= 0) {
+            Toast.makeText(getContext(), "스캔 결과가 없습니다.", Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        System.out.println("apInfo : " + scanItem.toString());
-        editListName.setText("");
+        for (int i=0; i < wifiList.getAdapter().getCount(); i++) {
+            apInfo.append(wifiList.getAdapter().getItem(i).toString());
+            apInfo.append("/");
+        }
 
+        dbAdapter = new DBAdapter(getContext());
+        dbAdapter.open();
+
+        dbAdapter.insert(name, apInfo.toString());
+
+        dbAdapter.close();
+
+        editListName.setText("");
         Toast.makeText(getContext(), name + " ap info 저장", Toast.LENGTH_SHORT).show();
     }
 
